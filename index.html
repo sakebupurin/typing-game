@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>タイピングゲーム</title>
+    <style>
+        body {
+            text-align: center;
+            background-image: url(oshi-choucho4.png);
+            background-size: cover;
+        }
+
+        #status-area {
+            margin: 20px 0;
+        }
+
+        #word {
+            font-size: 48px;
+            font-weight: bold;
+            margin: 20px 0;
+        }
+
+        #text-box {
+            width: 300px;
+            font-size: 24px;
+            padding: 10px;
+            margin: 20px auto;
+            border-radius: 8px;
+            border: 2px solid #ccc;
+        }
+
+        #start-btn {
+            font-size: 18px;
+            padding: 10px 20px;
+            cursor: pointer;
+        }
+
+        .error {
+            background-color: #ffcccc;
+        }
+    </style>
+</head>
+<body>
+    <h1>タイピングゲーム</h1>
+    <div id="status-area">
+        <p>残り時間：<span id="timer">0</span> 秒</p>
+        <p>スコア：<span id="score">0</span></p>
+    </div>
+    <div id="word">スタートを押してゲームスタート！</div>
+    <input type="text" id="text-box">
+    <button id="start-btn">ゲームスタート</button>
+    <script>
+        const gameTimer = document.getElementById('timer');
+        const gameScore = document.getElementById('score');
+        const word = document.getElementById('word');
+        const textBox = document.getElementById('text-box');
+        const startBTN = document.getElementById('start-btn');
+
+        const words = ['cat', 'dog', 'apple', 'japan', 'code', 'jiggly', 'puff', 'sakebu', 'kuma'];
+
+        let score = 0;
+        let remainingTime = 15;
+        let timer;
+
+        startBTN.addEventListener('click', function () {
+            score = 0;
+            remainingTime = 15;
+
+            gameScore.textContent = score;
+            gameTimer.textContent = remainingTime;
+            
+            word.textContent = words[Math.floor(Math.random() * words.length)];
+
+            textBox.disabled = false;
+            textBox.focus();
+
+            startTimer();
+        });
+
+        function startTimer() {
+            clearInterval(timer);
+
+            timer = setInterval(function() {
+                remainingTime--;
+                gameTimer.textContent = remainingTime;
+
+                if (remainingTime <= 0) {
+                    clearInterval(timer);
+                    textBox.disabled = true;
+                    textBox.value = '';
+                    textBox.classList.remove('error');
+                    word.textContent = 'お疲れ様！' + score + '問正解！';
+                }
+            }, 1000);
+        }
+
+        textBox.addEventListener('input', function() {
+            const currentInput = textBox.value;
+            const currentWord = word.textContent;
+
+            if (currentInput === currentWord) {
+                score++;
+                gameScore.textContent = score;
+                textBox.value = '';
+                textBox.classList.remove('error');
+                word.textContent = words[Math.floor(Math.random() * words.length)];
+            } else if (!currentWord.startsWith(currentInput)) {
+                textBox.classList.add('error');
+            } else {
+                textBox.classList.remove('error');
+            }
+        });
+    </script>
+</body>
+</html>
